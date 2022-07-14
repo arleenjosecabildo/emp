@@ -98,7 +98,7 @@ class Demo extends CI_Controller
     {
 
         /**
-         * Set new date starting with the
+         * Set new date starting with the max date
          */
         $maxDays = cal_days_in_month(CAL_GREGORIAN, $month, $currentYear);
         $dt->setDate($currentYear, $month, $maxDays);
