@@ -1,24 +1,45 @@
 <?php
+
 defined('BASEPATH') or exit('No direct script access allowed');
+
 
 class Demo extends CI_Controller
 
 {
 
+    /**
+     *
+     * @var integer
+     */
     const DEFAULT_BONUS_DAY = 10;
 
+    /**
+     *
+     * @var string
+     */
+    const CSV_FILENAME = 'emporium.csv';
+
+    /**
+     * Default constructor
+     */
     public function __construct()
 
     {
         parent::__construct();
     }
 
+    /**
+     * main method
+     */
     public function index()
 
     {
-        $this->load->view('welcome_message');
+        $this->generateCsv();
     }
 
+    /**
+     * Generates the csv
+     */
     public function generateCsv()
 
     {
@@ -38,29 +59,43 @@ class Demo extends CI_Controller
             ];
         }
 
-        $filename = 'emporium.csv';
+        if (file_exists(self::CSV_FILENAME)) {
 
-        // open csv file for writing
-        $f = fopen($filename, 'w');
-
-        if ($f === false) {
-            die('Error opening the file ' . $filename);
+            echo '== Deleting existing ' . self::CSV_FILENAME . '==' . PHP_EOL;
+            unlink(self::CSV_FILENAME);
+        } else {
+            echo '== No existing' . self::CSV_FILENAME . '==' . PHP_EOL;
         }
 
-        // write each row at a time to a file
+        // open csv file for writing
+        $f = fopen(self::CSV_FILENAME, 'w');
+
+        if ($f === false) {
+            die('Error opening the file ' . self::CSV_FILENAME);
+        }
+
+        echo "== Writing Data  ==" . PHP_EOL;
         foreach ($data as $row) {
             fputcsv($f, $row);
         }
 
         // close the file
         fclose($f);
+
+        echo "== DONE  ==" . PHP_EOL;
     }
 
-    private function generatePeriod(DateTime $dt, $currentYear, $month)
+    /**
+     * Generates the Period with M/y foramat
+     *
+     * @param DateTime $dt
+     * @param int $currentYear
+     * @param int $month
+     * @return string
+     */
+    protected function generatePeriod(DateTime $dt, $currentYear, $month)
 
     {
-
-        // for ($i = 1; $i <= 12; $i ++) {
 
         /**
          * Set new date starting with the
@@ -74,20 +109,16 @@ class Demo extends CI_Controller
 
         $period = $dt->format('M/y');
 
-        // echo $period . "\t";
-
         return $period;
-
-    /**
-     * get basic payment dates
-     */
-
-        // $this->getBasicPaymentDates($dt);
-        // $this->getBonusDates($dt);
-        // }
     }
 
-    private function getBasicPaymentDates(DateTime $dt)
+    /**
+     * Creates the Basic Payments Dates
+     *
+     * @param DateTime $dt
+     * @return string
+     */
+    protected function getBasicPaymentDates(DateTime $dt)
 
     {
 
@@ -95,15 +126,12 @@ class Demo extends CI_Controller
          *
          * get the Day
          *
-         *
-         *
          * @var string $day
          *
          */
         $day = $dt->format('D');
 
         if ($day == 'Sat') {
-            // echo '(' . $day . ')' . "\t";
 
             $dt->modify('- 1 day');
 
@@ -117,16 +145,16 @@ class Demo extends CI_Controller
             $lastDate = $dt->format('Y-m-t');
         }
 
-        // $day = $dt->format('D');
-
-        /**
-         */
-        // echo $lastDate . '(' . $day . ')' . "\t";
-
         return $lastDate;
     }
 
-    private function getBonusDates(DateTime $dt)
+    /**
+     * Generates the bonus date
+     *
+     * @param DateTime $dt
+     * @return string
+     */
+    protected function getBonusDates(DateTime $dt)
 
     {
         $year = $dt->format('Y');
@@ -141,7 +169,6 @@ class Demo extends CI_Controller
         } else {
             // do nothing for now
         }
-        // echo $dt->format('Y-m-d') . PHP_EOL;
 
         return $dt->format('Y-m-d');
     }
