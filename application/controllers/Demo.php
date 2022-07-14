@@ -1,7 +1,5 @@
 <?php
-
 defined('BASEPATH') or exit('No direct script access allowed');
-
 
 class Demo extends CI_Controller
 
@@ -48,7 +46,15 @@ class Demo extends CI_Controller
         $currentYear = $dt->format('Y');
         $data = [];
         for ($month = 1; $month <= 12; $month ++) {
-            $period = $this->generatePeriod($dt, $currentYear, $month);
+           
+            /**
+             * Set new date starting with the max date
+             */
+
+            $maxDays = cal_days_in_month(CAL_GREGORIAN, $month, $currentYear);
+            $dt->setDate($currentYear, $month, $maxDays);
+
+            $period = $this->getPeriod($dt);
             $basicPayDate = $this->getBasicPaymentDates($dt);
             $bonusDate = $this->getBonusDates($dt);
 
@@ -93,23 +99,15 @@ class Demo extends CI_Controller
      * @param int $month
      * @return string
      */
-    protected function generatePeriod(DateTime $dt, $currentYear, $month)
+    protected function getPeriod(DateTime $dt)
 
     {
 
         /**
-         * Set new date starting with the max date
-         */
-        $maxDays = cal_days_in_month(CAL_GREGORIAN, $month, $currentYear);
-        $dt->setDate($currentYear, $month, $maxDays);
-
-        /**
          * format the period/s
          */
+        return $dt->format('M/y');
 
-        $period = $dt->format('M/y');
-
-        return $period;
     }
 
     /**

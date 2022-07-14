@@ -13,7 +13,7 @@ class Demotest extends Demo
         $this->load->library('unit_test');
     }
 
-    function testGeneratePeriod()
+    function testGetPeriod()
     {
        
         $dt = new DateTime();
@@ -36,8 +36,11 @@ class Demotest extends Demo
         ];
         for ($month = 1; $month <= $months; $month ++) {
             $i = $month - 1;
+            
+            $maxDays = cal_days_in_month(CAL_GREGORIAN, $month, $currentYear);
+            $dt->setDate($currentYear, $month, $maxDays);
 
-            $actual = $this->generatePeriod($dt, $currentYear, $month);
+            $actual = $this->getPeriod($dt, $currentYear, $month);
             
             $this->unit->run($expected[$i], $actual, $actual);
         }
