@@ -95,8 +95,6 @@ class Demo extends CI_Controller
      * Generates the Period with M/y foramat
      *
      * @param DateTime $dt
-     * @param int $currentYear
-     * @param int $month
      * @return string
      */
     protected function getPeriod(DateTime $dt)
